@@ -4,12 +4,15 @@ myIntents.add(IntentsBitField.Flags.GuildPresences, IntentsBitField.Flags.GuildM
 const dotenv = require('dotenv');
 const moongoose = require("mongoose");
 //const  {generateXLS} = require('./attendanceSheetGenerator.js');
+console.log(dotenv.config());
+console.log(process.env);
 const {Attendance} = require("./attendance.modal.js");
 const {spreadSheet} = require("./googleSheet.modal.js");
-const {DB,TOKEN,CLIENT_ID,client_email,private_key,GOOGLE_JSON} = dotenv.config().parsed;
+//const {DB,TOKEN,CLIENT_ID,client_email,private_key,GOOGLE_JSON} = dotenv.config().parsed;
+const {DB,TOKEN,CLIENT_ID,client_email,private_key,GOOGLE_JSON} = process.env;
 const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const serviceAccountKeyFile = "/etc/secrets/googleSheetAPI.json";
+const serviceAccountKeyFile = "./googleSheetAPI.json";
 const { JWT } = require('google-auth-library');
 const sheetId = '';
 const tabName = 'Sheet1'
