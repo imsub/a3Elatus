@@ -1,3 +1,5 @@
+const express = require('express');
+const app = express();
 const { Client, GatewayIntentBits ,Collection, REST,Routes, SlashCommandBuilder ,IntentsBitField } = require('discord.js');
 const myIntents = new IntentsBitField();
 myIntents.add(IntentsBitField.Flags.GuildPresences, IntentsBitField.Flags.GuildMembers);
@@ -5,7 +7,7 @@ const dotenv = require('dotenv');
 const moongoose = require("mongoose");
 const {Attendance} = require("./attendance.modal.js");
 const {spreadSheet} = require("./googleSheet.modal.js");
-const {DB,TOKEN,CLIENT_ID,client_email,private_key} = process?.env?.ENV === "production" ?  process.env : dotenv.config().parsed;
+const {DB,TOKEN,CLIENT_ID,client_email,private_key,PORT} = process?.env?.ENV === "production" ?  process.env : dotenv.config().parsed;
 const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const serviceAccountKeyFile = "./googleSheetAPI.json";
@@ -73,6 +75,9 @@ const rest = new REST({version:"10"}).setToken(TOKEN);
         await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });//command cannot be longer than 15 charecters
       
         console.log('Successfully reloaded application (/) commands.');
+        app.listen(PORT, () =>{
+            console.log(`App listening at http://localhost:${PORT}`);
+        });
       } catch (error) {
         console.error(error);
       }
@@ -86,6 +91,10 @@ const getRoleIdBasedonRole = async (interaction,roleName)=>{
 const checkUserRole = (interaction,roleId)=>{
     return interaction.member.roles.cache.has(roleId);
 }
+app.get('/', (request, response) => {
+    client.login(TOKEN);
+	return response.json({content:"connection successfull"});
+});
 client.on('interactionCreate', async interaction => {
     console.log(interaction);
     switch(interaction.commandName){
