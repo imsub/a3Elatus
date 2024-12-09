@@ -101,7 +101,6 @@ const checkUserRole = (interaction,roleId)=>{
 // 	response.send("Connection to endpoint successfull");
 // });
 client.on('interactionCreate', async interaction => {
-    console.log(interaction);
     switch(interaction.commandName){
         case "present":
         case "yes": 
@@ -179,14 +178,14 @@ client.on('interactionCreate', async interaction => {
                 const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
-                    //interaction.reply("Generating URL for Excel Spread Sheet.");
-                    interaction.channel.send({content : "Generating URL for Excel Spread Sheet."});
+                    interaction.reply("Generating URL for Excel Spread Sheet.");
+                    //await interaction.channel.send({content : "Generating URL for Excel Spread Sheet."});
                     const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                     const date = dateTime.split(',')[0];
                     const data = await Attendance.find( { date: date } );
                     const url = await main(data,date);
                     console.log(`url---> ${url}`);
-                    interaction.channel.send({content : url})
+                    await interaction.channel.send({content : url})
                     // data.forEach(async element => {
                     //     await interaction.channel.send({ content: element.toString()});
                     // });
