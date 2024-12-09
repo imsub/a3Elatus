@@ -149,8 +149,7 @@ client.on('interactionCreate', async interaction => {
                 //interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
             }
         }catch(error){
-            //interaction.reply(error.message);
-            await interaction.channel.send({content : error.message});
+            await interaction.reply(error.message);
         }
             break;
         case "delete":
@@ -193,7 +192,7 @@ client.on('interactionCreate', async interaction => {
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                await interaction.channel.send({content : error.message})
+                await interaction.reply(error.message);
             }
             break;
         default : 
