@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const moongoose = require("mongoose");
 const {Attendance} = require("./attendance.modal.js");
 const {spreadSheet} = require("./googleSheet.modal.js");
-const {DB,TOKEN,CLIENT_ID,client_email,private_key,PORT} = process?.env?.ENV === "production" ?  process.env : dotenv.config().parsed;
+const {DB,TOKEN,CLIENT_ID,client_email,private_key,GOOGLE_API_KEY,PORT} = process?.env?.ENV === "production" ?  process.env : dotenv.config().parsed;
 const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const serviceAccountKeyFile = "./googleSheetAPI.json";
@@ -18,7 +18,13 @@ const range = 'A:E';
 const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
   'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/drive',
 ];
+const jwt = new JWT({
+    email: client_email,
+    key: private_key.replace(/\\n/g, "\n"),
+    scopes: SCOPES,
+  });
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds , 
@@ -92,8 +98,7 @@ const checkUserRole = (interaction,roleId)=>{
     return interaction.member.roles.cache.has(roleId);
 }
 app.get('/', (request, response) => {
-    client.login(TOKEN);
-	return response.json({content:"connection successfull"});
+	response.reply("Connection to endpoint successfull");
 });
 client.on('interactionCreate', async interaction => {
     console.log(interaction);
@@ -183,7 +188,7 @@ client.on('interactionCreate', async interaction => {
                     interaction.reply("You are not authorized to fetch attendance sheet.");
                 }
             }catch(error){
-                interaction.reply(error.message);
+                interaction.channel.send({content : error.message})
             }
             break;
         default : 
@@ -248,11 +253,6 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
     try {
       const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
       const date = dateTime.split(',')[0];
-      const jwt = new JWT({
-        email: client_email,
-        key: private_key,
-        scopes: SCOPES,
-      });
       const doc = await GoogleSpreadsheet.createNewSpreadsheetDocument(jwt, { title: `attendance sheet ${date}` });
       await doc.loadInfo();
       //const sheet1 = doc.sheetsByIndex[0];
