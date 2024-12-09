@@ -97,9 +97,9 @@ const getRoleIdBasedonRole = async (interaction,roleName)=>{
 const checkUserRole = (interaction,roleId)=>{
     return interaction.member.roles.cache.has(roleId);
 }
-app.get('/', (request, response) => {
-	response.send("Connection to endpoint successfull");
-});
+// app.get('/', (request, response) => {
+// 	response.send("Connection to endpoint successfull");
+// });
 client.on('interactionCreate', async interaction => {
     console.log(interaction);
     switch(interaction.commandName){
