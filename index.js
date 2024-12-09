@@ -201,6 +201,9 @@ client.on('interactionCreate', async interaction => {
             //interaction.channel.send({content : "invalid command. Please try again!"});
     }
     // Making sure the interaction is a command
+    if (!interaction.isCommand()) {
+        return false;
+    }
 })
 client.login(TOKEN);
 
