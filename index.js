@@ -170,7 +170,8 @@ client.on('interactionCreate', async interaction => {
                     interaction.channel.send({content : "You are not authorized to delete records from database."});
                 }
             }catch(error){
-                interaction.reply(error.message);
+                //interaction.reply(error.message);
+                interaction.channel.send({content : error.message});
             }
             break;
         case "all":
