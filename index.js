@@ -133,8 +133,6 @@ client.on('interactionCreate', async interaction => {
             //const getrole = await interaction.guild.members.fetch(interaction.user.id);
              //nickName = interactionUser.nickname;
             //{username  , globalName , id} = interactionUser.user;
-            
-            console.log(nickName,username ,globalName , id , roleId);
             const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
             const date = dateTime.split(',')[0];
             const time = dateTime.split(',')[1];
@@ -144,15 +142,15 @@ client.on('interactionCreate', async interaction => {
                 const update = { $set: { username , globalName , userId : id , nickName,  date ,  attendance : "present" , time}};
                 const options = { upsert: true };
                 await Attendance.updateOne(query, update, options);
-                interaction.reply(`Hello, ${globalName} your attendance is captured in our records.`);
+                await interaction.reply(`Hello, ${globalName} your attendance is captured in our records.`);
                 //interaction.channel.send({content : `Hello, ${globalName} your attendance is captured in our records.`});
             }else{
-                interaction.reply(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
+                await interaction.reply(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
                 //interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
             }
         }catch(error){
             //interaction.reply(error.message);
-            interaction.channel.send({content : error.message});
+            await interaction.channel.send({content : error.message});
         }
             break;
         case "delete":
@@ -161,15 +159,15 @@ client.on('interactionCreate', async interaction => {
                 const isModerator = checkUserRole(interaction,moderatorRoleId.id);
                 if(isModerator && !!interaction.options.getString("displayname")){
                     await Attendance.deleteOne( { globalName: interaction.options.getString("displayname") } );
-                    interaction.reply("Attendance deleted.");
+                    await interaction.reply("Attendance deleted.");
                     //interaction.channel.send({content : "Attendance deleted."});
                 }
                 else{
-                    interaction.reply("You are not authorized to delete records from database.");
+                    await interaction.reply("You are not authorized to delete records from database.");
                     //interaction.channel.send({content : "You are not authorized to delete records from database."});
                 }
             }catch(error){
-                interaction.reply(error.message);
+                await interaction.reply(error.message);
                 //interaction.channel.send({content : error.message});
             }
             break;
@@ -178,34 +176,31 @@ client.on('interactionCreate', async interaction => {
                 const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
-                    interaction.reply("Generating URL for Excel Spread Sheet.");
+                    await interaction.reply("Generating URL for Excel Spread Sheet.");
                     //await interaction.channel.send({content : "Generating URL for Excel Spread Sheet."});
                     const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                     const date = dateTime.split(',')[0];
                     const data = await Attendance.find( { date: date } );
                     const url = await main(data,date);
-                    console.log(`url---> ${url}`);
+                    //console.log(`url---> ${url}`);
                     await interaction.channel.send({content : url})
                     // data.forEach(async element => {
                     //     await interaction.channel.send({ content: element.toString()});
                     // });
                 }
                 else{
-                    interaction.reply("You are not authorized to fetch attendance sheet.");
+                    await interaction.reply("You are not authorized to fetch attendance sheet.");
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                interaction.channel.send({content : error.message})
+                await interaction.channel.send({content : error.message})
             }
             break;
         default : 
-            interaction.reply("invalid command. Please try again!");
+            await interaction.reply("invalid command. Please try again!");
             //interaction.channel.send({content : "invalid command. Please try again!"});
     }
     // Making sure the interaction is a command
-    if (!interaction.isCommand()) {
-        return false;
-    }
 })
 client.login(TOKEN);
 
@@ -252,7 +247,7 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
             valueInputOption: 'USER_ENTERED',
             resource: resource1,
           });
-          console.log('%d cells updated.', result.data.updatedCells);
+        //   console.log('%d cells updated.', result.data.updatedCells);
     const query = {  url : doc._spreadsheetUrl};
     const update = { $set: { url : doc._spreadsheetUrl ,  date , time}};
     const options = { upsert: true };
@@ -269,8 +264,8 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
       //const spreadsheetGenerated = new GoogleSpreadsheet(doc.spreadsheetId, jwt);
       //const permissions = await doc.listPermissions();
       await doc.setPublicAccessLevel('writer');
-      console.log(`url ${doc._spreadsheetUrl}`);
-      console.log(doc._spreadsheetUrl);
+    //   console.log(`url ${doc._spreadsheetUrl}`);
+    //   console.log(doc._spreadsheetUrl);
       return doc;
     } catch (err) {
         // TODO (developer) - Handle exception
@@ -281,7 +276,7 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
     const googleSheetClient = await _getGoogleSheetClient();
     // Reading Google Sheet from a specific range
     //const data = await _readGoogleSheet(googleSheetClient, sheetId, tabName, range);
-    console.log(data);
+    //console.log(data);
     // Adding a new row to Google Sheet
     const dataToBeInserted = [  
       ['Global Name' , 'User Name', 'Date', 'Time','Share Given'],
