@@ -145,11 +145,11 @@ client.on('interactionCreate', async interaction => {
                 const update = { $set: { username , globalName , userId : id , nickName,  date ,  attendance : "present" , time}};
                 const options = { upsert: true };
                 await Attendance.updateOne(query, update, options);
-                //interaction.reply(`Hello, ${globalName} your attendance is captured in our records.`);
-                interaction.channel.send({content : `Hello, ${globalName} your attendance is captured in our records.`});
+                interaction.reply(`Hello, ${globalName} your attendance is captured in our records.`);
+                //interaction.channel.send({content : `Hello, ${globalName} your attendance is captured in our records.`});
             }else{
-                //interaction.reply(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
-                interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
+                interaction.reply(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
+                //interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
             }
         }catch(error){
             //interaction.reply(error.message);
@@ -162,16 +162,16 @@ client.on('interactionCreate', async interaction => {
                 const isModerator = checkUserRole(interaction,moderatorRoleId.id);
                 if(isModerator && !!interaction.options.getString("displayname")){
                     await Attendance.deleteOne( { globalName: interaction.options.getString("displayname") } );
-                    //interaction.reply("Attendance deleted.");
-                    interaction.channel.send({content : "Attendance deleted."});
+                    interaction.reply("Attendance deleted.");
+                    //interaction.channel.send({content : "Attendance deleted."});
                 }
                 else{
-                    //interaction.reply("You are not authorized to delete records from database.");
-                    interaction.channel.send({content : "You are not authorized to delete records from database."});
+                    interaction.reply("You are not authorized to delete records from database.");
+                    //interaction.channel.send({content : "You are not authorized to delete records from database."});
                 }
             }catch(error){
-                //interaction.reply(error.message);
-                interaction.channel.send({content : error.message});
+                interaction.reply(error.message);
+                //interaction.channel.send({content : error.message});
             }
             break;
         case "all":
@@ -192,16 +192,16 @@ client.on('interactionCreate', async interaction => {
                     // });
                 }
                 else{
-                    //interaction.reply("You are not authorized to fetch attendance sheet.");
-                    interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
+                    interaction.reply("You are not authorized to fetch attendance sheet.");
+                    //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
                 interaction.channel.send({content : error.message})
             }
             break;
         default : 
-            //interaction.reply("invalid command. Please try again!");
-            interaction.channel.send({content : "invalid command. Please try again!"});
+            interaction.reply("invalid command. Please try again!");
+            //interaction.channel.send({content : "invalid command. Please try again!"});
     }
     // Making sure the interaction is a command
     if (!interaction.isCommand()) {
