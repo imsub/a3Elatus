@@ -149,7 +149,10 @@ client.on('interactionCreate', async interaction => {
                 //interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
             }
         }catch(error){
-            await interaction.reply(error.message);
+            if(error.message === "Unknown interaction" || error.message === "Interaction has already been acknowledged.")
+                return;
+            else
+                await interaction.reply(error.message);
         }
             break;
         case "delete":
@@ -166,7 +169,10 @@ client.on('interactionCreate', async interaction => {
                     //interaction.channel.send({content : "You are not authorized to delete records from database."});
                 }
             }catch(error){
-                await interaction.reply(error.message);
+                if(error.message === "Unknown interaction" || error.message === "Interaction has already been acknowledged.")
+                    return;
+                else
+                    await interaction.reply(error.message);
                 //interaction.channel.send({content : error.message});
             }
             break;
@@ -192,7 +198,10 @@ client.on('interactionCreate', async interaction => {
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                await interaction.reply(error.message);
+                if(error.message === "Unknown interaction" || error.message === "Interaction has already been acknowledged.")
+                    return;
+                else
+                    await interaction.reply(error.message);
             }
             break;
         default : 
