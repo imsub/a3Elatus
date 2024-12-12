@@ -25,3 +25,4 @@ googleDoc.js
 *.njsproj
 *.sln
 *.sw?
+.env2

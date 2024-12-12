@@ -157,7 +157,7 @@ client.on('interactionCreate', async interaction => {
             break;
         case "delete":
             try{
-                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
+                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId.id);
                 if(isModerator && !!interaction.options.getString("displayname")){
                     await Attendance.deleteOne( { globalName: interaction.options.getString("displayname") } );
@@ -180,7 +180,7 @@ client.on('interactionCreate', async interaction => {
             break;
         case "all":
             try{
-                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
+                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
                     await interaction.reply("Generating URL for Excel Spread Sheet.");
@@ -206,7 +206,7 @@ client.on('interactionCreate', async interaction => {
             break;
         case "mute":
             try{
-                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
+                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
                     const payload = getParams(interaction);
@@ -229,7 +229,7 @@ client.on('interactionCreate', async interaction => {
             break;
         case "unmute":
             try{
-                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators"]);
+                const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
                     const payload = getParams(interaction);
