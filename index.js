@@ -282,7 +282,18 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
         scopes: SCOPES,
     });
     const service = google.sheets({version: 'v4', auth});
-    
+    const existingData =  await googleSheetClient.spreadsheets.values.get({
+        spreadsheetId: doc.spreadsheetId,
+    range: `${tabName}!${range}`,
+    });
+    //existingData.data.values.shift();
+    for(let i=1 ;i<resource1.values.length;i++){ 
+        for(let j=1;j<existingData.data.values.length;j++){
+            if(resource1.values[i][0] === existingData.data.values[j][0]){
+                resource1.values[i][4] = existingData.data.values[j][4]
+            }
+        }
+    }
     await googleSheetClient.spreadsheets.values.clear({
         spreadsheetId: doc.spreadsheetId,
     range: `${tabName}!${range}`,
