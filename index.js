@@ -444,7 +444,7 @@ async function muteRoleMembers(message, roleName) {
     const role = message.guild.roles.cache.find(r => r.name.toLowerCase() === roleName.toLowerCase());
 
     if (!role) {
-        await message.reply(`Role "${roleName}" not found.`);
+        await message.followUp(`Role "${roleName}" not found.`);
         return;
     }
 
@@ -452,7 +452,7 @@ async function muteRoleMembers(message, roleName) {
     const members = role.members;
 
     if (members.size === 0) {
-        await message.reply(`No members found with the role "${roleName}".`);
+        await message.followUp(`No members found with the role "${roleName}".`);
         return;
     }
 
@@ -474,19 +474,19 @@ async function muteRoleMembers(message, roleName) {
         }
     }
 
-    await message.reply(`Muted ${successCount} members with the role "${roleName}". ${failureCount} members were not muted (not in voice channels or other issues).`);
+    await message.followUp(`Muted ${successCount} members with the role "${roleName}". ${failureCount} members were not muted (not in voice channels or other issues).`);
 }
 async function unmuteRoleMembers(message, roleName) {
     const role = message.guild.roles.cache.find(r => r.name.toLowerCase() === roleName.toLowerCase());
     if (!role) {
-        await message.reply(`Role "${roleName}" not found.`);
+        await message.followUp(`Role "${roleName}" not found.`);
         return;
     }
 
     const members = role.members;
 
     if (members.size === 0) {
-        await message.reply(`No members found with the role "${roleName}".`);
+        await message.followUp(`No members found with the role "${roleName}".`);
         return;
     }
 
@@ -507,7 +507,7 @@ async function unmuteRoleMembers(message, roleName) {
         }
     }
 
-    await message.reply(`Unmuted ${successCount} members with the role "${roleName}". ${failureCount} members were not unmuted.`);
+    await message.followUp(`Unmuted ${successCount} members with the role "${roleName}". ${failureCount} members were not unmuted.`);
 }
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
