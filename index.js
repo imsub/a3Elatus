@@ -134,7 +134,8 @@ client.on('interactionCreate', async interaction => {
                 break;
             case "delete":
                     if(isModerator && !!interaction.options.getString("displayname")){
-                        await Attendance.deleteOne( { globalName: interaction.options.getString("displayname") } );
+                        const regex = new RegExp(["^", interaction.options.getString("displayname"), "$"].join(""), "i");
+                        await Attendance.deleteOne( { globalName: regex } );
                         await interaction.followUp("Attendance deleted.");
                         const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                         const date = dateTime.split(',')[0];
