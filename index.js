@@ -512,4 +512,6 @@ async function unmuteRoleMembers(message, roleName) {
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
 });
-
+client.on('error',(err)=>{
+    console.log(`Error Log ${err.message}`);
+})
