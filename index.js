@@ -52,10 +52,6 @@ const unmuteCommand = new SlashCommandBuilder().setName('unmute').setDescription
                     .addIntegerOption(option =>option.setName('duration').setDescription('enter time in minutes'));
 const commands = [
     {
-        name : "lock",
-        description : "Lock Attendance Sheet"
-    },
-    {
         name : "present",
         description : "record attendance"
     },
@@ -102,6 +98,7 @@ const checkUserRole = (interaction,roleId)=>{
 // 	response.send("Connection to endpoint successfull");
 // });
 client.on('interactionCreate', async interaction => {
+    await interaction.deferReply();
     switch(interaction.commandName){
         case "present":
         case "yes": 
@@ -143,16 +140,15 @@ client.on('interactionCreate', async interaction => {
                 const update = { $set: { username , globalName , userId : id , nickName,  date ,  attendance : "present" , time}};
                 const options = { upsert: true };
                 await Attendance.updateOne(query, update, options);
-                await interaction.reply(`Hello, ${globalName} your attendance is captured in our records.`);
+                await interaction.followUp(`Hello, ${globalName} your attendance is captured in our records.`);
                 const data = await Attendance.find( { date: date } );
                 const url = await main(data,date);
             }else{
-                await interaction.reply(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
+                await interaction.followUp(`Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`);
                 //interaction.channel.send({content : `Hello, ${globalName} your attendance is already captured in our records, please try again tomorrow.`});
             }
         }catch(error){
-            if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
-                await interaction.reply(error.message);
+            await interaction.followUp(error.message);
         }
             break;
         case "delete":
@@ -161,7 +157,7 @@ client.on('interactionCreate', async interaction => {
                 const isModerator = checkUserRole(interaction,moderatorRoleId.id);
                 if(isModerator && !!interaction.options.getString("displayname")){
                     await Attendance.deleteOne( { globalName: interaction.options.getString("displayname") } );
-                    await interaction.reply("Attendance deleted.");
+                    await interaction.followUp("Attendance deleted.");
                     const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                     const date = dateTime.split(',')[0];
                     const data = await Attendance.find( { date: date } );
@@ -169,13 +165,11 @@ client.on('interactionCreate', async interaction => {
                     //interaction.channel.send({content : "Attendance deleted."});
                 }
                 else{
-                    await interaction.reply("You are not authorized to delete records from database.");
+                    await interaction.followUp("You are not authorized to delete records from database.");
                     //interaction.channel.send({content : "You are not authorized to delete records from database."});
                 }
             }catch(error){
-                if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
-                    await interaction.reply(error.message);
-                //interaction.channel.send({content : error.message});
+                await interaction.followUp(error.message);
             }
             break;
         case "all":
@@ -183,8 +177,7 @@ client.on('interactionCreate', async interaction => {
                 const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
-                    await interaction.deferReply();
-                    //await interaction.reply("Generating URL for Excel Spread Sheet.");
+                    //await interaction.followUp("Generating URL for Excel Spread Sheet.");
                     //await interaction.channel.send({content : "Generating URL for Excel Spread Sheet."});
                     const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                     const date = dateTime.split(',')[0];
@@ -198,7 +191,7 @@ client.on('interactionCreate', async interaction => {
                     // });
                 }
                 else{
-                    await interaction.reply("You are not authorized to fetch attendance sheet.");
+                    await interaction.followUp("You are not authorized to fetch attendance sheet.");
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
@@ -218,15 +211,14 @@ client.on('interactionCreate', async interaction => {
                     else if(payload.rolename)
                         await muteRoleMembers(interaction,payload.rolename,payload.duration);
                     else
-                        await interaction.reply("Please provide either role or player name.");
+                        await interaction.followUp("Please provide either role or player name.");
                 }
                 else{
-                    await interaction.reply("You are not authorized to Mute player.");
+                    await interaction.followUp("You are not authorized to Mute player.");
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
-                    await interaction.reply(error.message);
+                await interaction.followUp(error.message);
             }
             break;
         case "unmute":
@@ -240,19 +232,18 @@ client.on('interactionCreate', async interaction => {
                     else if(payload.rolename)
                         await unmuteRoleMembers(interaction,payload.rolename,payload.duration);
                     else
-                        await interaction.reply("Please provide either role or player name.");
+                        await interaction.followUp("Please provide either role or player name.");
                 }
                 else{
-                    await interaction.reply("You are not authorized to Unmute player.");
+                    await interaction.followUp("You are not authorized to Unmute player.");
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
-                    await interaction.reply(error.message);
+                await interaction.followUp(error.message);
             }
             break;
         default : 
-            await interaction.reply("invalid command. Please try again!");
+            await interaction.followUp("invalid command. Please try again!");
             //interaction.channel.send({content : "invalid command. Please try again!"});
     }
     // Making sure the interaction is a command
@@ -394,11 +385,11 @@ async function muteMemberByName(interaction,name) {
                     memberFound = true;
                     if(member.voice.mute === false || !MUTEDMEMBER.has(name.toLowerCase())){
                         await member.voice.setMute(true);
-                        await interaction.reply(`Muted ${name} successfully.`);
+                        await interaction.followUp(`Muted ${name} successfully.`);
                         MUTEDMEMBER.add(name.toLowerCase());
                     }
                     else{
-                        await interaction.reply(`${name} is already muted in a voice channel.`);
+                        await interaction.followUp(`${name} is already muted in a voice channel.`);
                     }
                     break;
                 }
@@ -406,7 +397,7 @@ async function muteMemberByName(interaction,name) {
             if(memberFound) break;
         }
         if(!memberFound){
-            await interaction.reply(`Either ${name} is not in a voice channel or ${name} does not exist in server`);
+            await interaction.followUp(`Either ${name} is not in a voice channel or ${name} does not exist in server`);
             return;
         }      
     }catch (error) {
@@ -429,11 +420,11 @@ async function unmuteMemberByName(interaction, name) {
                     memberFound = true;
                     if(member.voice.mute === true || MUTEDMEMBER.has(name.toLowerCase())){
                         await member.voice.setMute(false);
-                        await interaction.reply(`Unmuted ${name} successfully.`);
+                        await interaction.followUp(`Unmuted ${name} successfully.`);
                         MUTEDMEMBER.delete(name.toLowerCase());
                     }
                     else{
-                        await interaction.reply(`${name} is already unmuted in a voice channel.`);
+                        await interaction.followUp(`${name} is already unmuted in a voice channel.`);
                     }
                     break;
                 }
@@ -441,7 +432,7 @@ async function unmuteMemberByName(interaction, name) {
             if(memberFound) break;
         }
         if(!memberFound){
-            await interaction.reply(`Either ${name} is not in a voice channel or ${name} does not exist in server`);
+            await interaction.followUp(`Either ${name} is not in a voice channel or ${name} does not exist in server`);
             return;
         }      
     }catch (error) {
