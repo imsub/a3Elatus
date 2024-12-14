@@ -26,3 +26,4 @@ googleDoc.js
 *.sln
 *.sw?
 .env2
+unknown.js
