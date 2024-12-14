@@ -183,14 +183,16 @@ client.on('interactionCreate', async interaction => {
                 const moderatorRoleId = await getRoleIdBasedonRole(interaction,["Moderator","moderator","Mod","mod","moderators","Moderators","@moderator","Owner","owner","@Moderator"]);
                 const isModerator = checkUserRole(interaction,moderatorRoleId?.id);
                 if(isModerator){
-                    await interaction.reply("Generating URL for Excel Spread Sheet.");
+                    await interaction.deferReply();
+                    //await interaction.reply("Generating URL for Excel Spread Sheet.");
                     //await interaction.channel.send({content : "Generating URL for Excel Spread Sheet."});
                     const dateTime = new Date().toLocaleString("en-US", {timeZone: 'Asia/Kolkata'});
                     const date = dateTime.split(',')[0];
                     const data = await Attendance.find( { date: date } );
                     const url = await main(data,date);
                     //console.log(`url---> ${url}`);
-                    await interaction.channel.send({content : url})
+                    //await interaction.channel.send({content : url})
+                    await interaction.followUp(url);
                     // data.forEach(async element => {
                     //     await interaction.channel.send({ content: element.toString()});
                     // });
@@ -200,8 +202,8 @@ client.on('interactionCreate', async interaction => {
                     //interaction.channel.send({content : "You are not authorized to fetch attendance sheet."});
                 }
             }catch(error){
-                if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
-                    await interaction.reply(error.message);
+                //if(error.message !== "Unknown interaction" && error.message !== "Interaction has already been acknowledged.")
+                await interaction.followUp(error.message);
             }
             break;
         case "mute":
@@ -287,10 +289,12 @@ async function _writeGoogleSheet(googleSheetClient, sheetId, tabName, range, dat
     range: `${tabName}!${range}`,
     });
     //existingData.data.values.shift();
-    for(let i=1 ;i<resource1.values.length;i++){ 
-        for(let j=1;j<existingData.data.values.length;j++){
-            if(resource1.values[i][0] === existingData.data.values[j][0]){
-                resource1.values[i][4] = existingData.data.values[j][4]
+    if(existingData?.data?.values?.length > 0){
+        for(let i=1 ;i<resource1.values.length;i++){ 
+            for(let j=1;j<existingData?.data.values.length;j++){
+                if(resource1.values[i][0] === existingData.data.values[j][0] && resource1.values[i][2] === existingData.data.values[j][2]){
+                    resource1.values[i][4] = existingData.data.values[j][4]
+                }
             }
         }
     }
